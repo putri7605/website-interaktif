@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Warung Makan Mini - Pesanan Interaktif</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <style>
+    /* CSS Anda dimulai di sini */
+    :root {
+      --primary-color: #FF7043; /* Oranye Cerah */
+      --secondary-color: #FFCC80; /* Oranye Muda */
+      --accent-color: #D84315; /* Oranye Gelap */
+      --text-color: #424242; /* Abu-abu Gelap */
+      --light-text-color: #757575; /* Abu-abu Sedang */
+      --background-light: #FFFDE7; /* Kuning Sangat Muda */
+      --background-medium: #FFF3E0; /* Oranye Sangat Muda */
+      --white: #FFFFFF;
+      --shadow-light: rgba(0, 0, 0, 0.08);
+      --shadow-medium: rgba(0, 0, 0, 0.15);
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--background-light);
+      padding: 20px;
+      max-width: 1200px; /* Lebar maksimum */
+      margin: auto;
+      color: var(--text-color);
+      line-height: 1.6;
+    }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      text-align: center;
+      color: var(--accent-color);
+      font-size: 2.8em;
+      margin-bottom: 30px;
+      letter-spacing: 1px;
+      text-shadow: 1px 1px 2px var(--shadow-light);
+    }
+
+    .filter-buttons {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .filter-button {
+      background-color: var(--secondary-color);
+      color: var(--text-color);
+      border: none;
+      padding: 8px 18px; /* Padding dikurangi */
+      margin: 0 6px; /* Margin dikurangi */
+      border-radius: 20px; /* Radius dikurangi */
+      cursor: pointer;
+      font-size: 1em; /* Ukuran font sedikit dikurangi */
+      font-weight: 600;
+      transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+      box-shadow: 0 2px 4px var(--shadow-light); /* Bayangan dikurangi */
+    }
+
+    .filter-button:hover {
+      background-color: var(--primary-color);
+      color: var(--white);
+      transform: translateY(-1px); /* Efek angkat dikurangi */
+      box-shadow: 0 3px 8px var(--shadow-medium); /* Bayangan dikurangi */
+    }
+
+    .filter-button.active {
+      background-color: var(--primary-color);
+      color: var(--white);
+      box-shadow: 0 3px 8px var(--shadow-medium);
+      transform: translateY(-0.5px);
+    }
+
+    .menu-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); /* Ukuran item minimum dikurangi */
+      gap: 20px; /* Jarak antar item dikurangi */
+      margin-top: 20px;
+    }
+
+    .menu-item {
+      background: var(--white);
+      border: 1px solid var(--secondary-color);
+      border-radius: 10px; /* Sudut membulat dikurangi */
+      padding: 18px; /* Padding dikurangi */
+      text-align: center;
+      box-shadow: 0 3px 12px var(--shadow-light); /* Bayangan dikurangi */
+      transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .menu-item.hidden {
+      display: none;
+      opacity: 0;
+    }
+
+    .menu-item:hover {
+      transform: translateY(-3px); /* Efek angkat dikurangi */
+      box-shadow: 0 6px 20px var(--shadow-medium); /* Bayangan dikurangi */
+    }
+
+    .menu-item img {
+      width: 100%;
+      height: 140px; /* Tinggi gambar dikurangi */
+      object-fit: cover;
+      border-radius: 6px; /* Sudut gambar dikurangi */
+      margin-bottom: 12px; /* Margin dikurangi */
+      border: 1px solid #eee;
+    }
+
+    .menu-item h3 {
+      font-family: 'Playfair Display', serif;
+      margin: 8px 0 6px; /* Margin dikurangi */
+      color: var(--primary-color);
+      font-size: 1.4em; /* Ukuran font sedikit dikurangi */
+      font-weight: 700;
+    }
+
+    .menu-item p {
+      margin: 4px 0 12px; /* Margin dikurangi */
+      color: var(--light-text-color);
+      font-size: 1em; /* Ukuran font sedikit dikurangi */
+      font-weight: 600;
+    }
+
+    .menu-item input {
+      width: 60px; /* Lebar input dikurangi */
+      padding: 7px; /* Padding dikurangi */
+      margin-top: 8px; /* Margin dikurangi */
+      border: 1px solid var(--secondary-color);
+      border-radius: 5px; /* Radius dikurangi */
+      text-align: center;
+      font-size: 0.95em; /* Ukuran font sedikit dikurangi */
+      color: var(--text-color);
+    }
+
+    .menu-item button {
+      margin-top: 12px; /* Margin dikurangi */
+      background-color: var(--primary-color);
+      color: var(--white);
+      border: none;
+      padding: 9px 18px; /* Padding dikurangi */
+      border-radius: 5px; /* Radius dikurangi */
+      cursor: pointer;
+      font-size: 1em; /* Ukuran font sedikit dikurangi */
+      font-weight: 600;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    .menu-item button:hover {
+      background-color: var(--accent-color);
+      transform: translateY(-1px); /* Efek angkat dikurangi */
+    }
+
+    .cart {
+      margin-top: 35px; /* Margin dikurangi */
+      background: var(--background-medium);
+      padding: 25px; /* Padding dikurangi */
+      border-radius: 10px; /* Radius dikurangi */
+      border: 1px solid var(--secondary-color);
+      box-shadow: 0 3px 12px var(--shadow-light); /* Bayangan dikurangi */
+    }
+
+    .cart h2 {
+      font-family: 'Playfair Display', serif;
+      margin-bottom: 18px; /* Margin dikurangi */
+      color: var(--primary-color);
+      font-size: 1.8em; /* Ukuran font sedikit dikurangi */
+      text-align: center;
+    }
+
+    .cart ul {
+      list-style: none;
+      padding: 0;
+      max-height: 250px; /* Tinggi maksimum dikurangi */
+      overflow-y: auto;
+      border-bottom: 1px solid var(--secondary-color);
+      padding-bottom: 12px; /* Padding dikurangi */
+      margin-bottom: 12px; /* Margin dikurangi */
+    }
+
+    .cart li {
+      padding: 10px 12px; /* Padding dikurangi */
+      margin: 6px 0; /* Margin dikurangi */
+      border-radius: 7px; /* Radius dikurangi */
+      border-left: 4px solid var(--primary-color); /* Border kiri dikurangi */
+      box-shadow: 0 1px 6px rgba(0,0,0,0.04); /* Bayangan dikurangi */
+      font-size: 1em; /* Ukuran font sedikit dikurangi */
+    }
+    .cart li:hover {
+      background: #FFF8E1;
+      transform: translateX(2px); /* Efek geser dikurangi */
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08); /* Bayangan dikurangi */
+    }
+    .cart li.done {
+      text-decoration: line-through;
+      color: var(--light-text-color);
+      border-left-color: #81C784;
+      opacity: 0.7;
+      background-color: #F5F5F5;
+    }
+
+    .total {
+      font-weight: 700;
+      margin-top: 18px; /* Margin dikurangi */
+      font-size: 1.8em; /* Ukuran font sedikit dikurangi */
+      text-align: right;
+      color: var(--accent-color);
+    }
+
+    .clear-btn {
+      margin-top: 18px; /* Margin dikurangi */
+      padding: 10px 22px; /* Padding dikurangi */
+      border-radius: 5px; /* Radius dikurangi */
+      font-size: 1em; /* Ukuran font sedikit dikurangi */
+      max-width: 280px; /* Batasi lebar tombol */
+    }
+
+    /* Responsif */
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 2.2em;
+      }
+      .filter-button {
+        padding: 7px 12px;
+        font-size: 0.9em;
+        margin: 0 4px;
+      }
+      .menu-container {
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); /* Ukuran item minimum lebih kecil */
+        gap: 15px;
+      }
+      .menu-item {
+        padding: 12px;
+      }
+      .menu-item img {
+        height: 100px;
+      }
+      .menu-item h3 {
+        font-size: 1.2em;
+      }
+      .menu-item p {
+        font-size: 0.9em;
+      }
+      .cart {
+        padding: 18px;
+      }
+      .cart h2 {
+        font-size: 1.6em;
+      }
+      .cart li {
+        font-size: 0.95em;
+        padding: 8px;
+      }
+      .total {
+        font-size: 1.6em;
+      }
+      .clear-btn {
+        padding: 8px 18px;
+        font-size: 0.95em;
+      }
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 10px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+      .filter-buttons {
+        gap: 8px;
+      }
+      .filter-button {
+        flex: 1 1 40%; /* Lebih fleksibel di layar sangat kecil */
+        max-width: 48%;
+      }
+      .menu-container {
+        grid-template-columns: 1fr;
+      }
+      .menu-item img {
+        height: 120px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🍽 Warung Makanku</h1>
+
+  <div class="filter-buttons">
+    <button class="filter-button active" data-filter="all">Semua Menu</button>
+    <button class="filter-button" data-filter="makanan">Makanan</button>
+    <button class="filter-button" data-filter="minuman">Minuman</button>
+  </div>
+
+  <div class="menu-container">
+    <!-- GAMBAR & HARGA HTML -->
+    <div class="menu-item" data-nama="Nasi Goreng" data-harga="15000" data-kategori="makanan">
+      <img src="nasi goreng.jpg" alt="Nasi Goreng">
+      <h3>Nasi Goreng</h3>
+      <p>Rp15.000</p>
+      <input type="number" min="1" value="1" class="jumlah">
+      <button class="tambah">Tambah</button>
+    </div>
+
+    <div class="menu-item" data-nama="Mie Ayam" data-harga="12000" data-kategori="makanan">
+      <img src="mieayam.jpg" alt="Mie Ayam">
+      <h3>Mie Ayam</h3>
+      <p>Rp12.000</p>
+      <input type="number" min="1" value="1" class="jumlah">
+      <button class="tambah">Tambah</button>
+    </div>
+
+     <div class="menu-item" data-nama="Ayam Bakar" data-harga="25000" data-kategori="makanan">
+      <img src="ayam bakar.jpg" alt="Ayam Bakar">
+      <h3>Ayam Bakar</h3>
+      <p>Rp25.000</p>
+      <input type="number" min="1" value="1" class="jumlah">
+      <button class="tambah">Tambah</button>
+    </div>
+
+    <div class="menu-item" data-nama="Miso" data-harga="18000" data-kategori="makanan">
+      <img src="mieso.jpg" alt="Miso">
+      <h3>Miso</h3>
+      <p>Rp18.000</p>
+      <input type="number" min="1" value="1" class="jumlah">
+      <button class="tambah">Tambah</button>
+    </div>
+
+     <div class="menu-item" data-nama="Nasi Uduk" data-harga="18000" data-kategori="makanan">
+      <img src="nasi.jpg" alt="Nasi Uduk">
+      <h3>Nasi Uduk</h3>
+      <p>Rp18.000</p>
+      <input type="number" min="1" value="1" class="jumlah">
+      <button class="tambah">Tambah</button>
+    </div>
+
+     <div class="menu-item" data-nama="Bakso" data-harga="18000" data-kategori="makanan">
+      <img src="bakso.jpg" alt="Bakso">
+      <h3>Bakso</h3>
+      <p>Rp18.000</p>
+      <input type="number" min="1" value="1" class="jumlah">
+      <button class="tambah">Tambah</button>
+    </div>
+
+    <div class="menu-item" data-nama="Es Teh" data-harga="5000" data-kategori="minuman">
+      <img src="mandi.jpg" alt="Es Teh ">
+      <h3>Es Teh</h3>
+      <p>Rp5.000</p>
+      <input type="number" min="1" value="1" class="jumlah">
+      <button class="tambah">Tambah</button>
+    </div>
+
+    <div class="menu-item" data-nama="Teh Panas" data-harga="5000" data-kategori="minuman">
+      <img src="teh manis.jpg" alt="Teh Panas ">
+      <h3>Teh Panas</h3>
+      <p>Rp5.000</p>
+      <input type="number" min="1" value="1" class="jumlah">
+      <button class="tambah">Tambah</button>
+    </div>
+
+    <div class="menu-item" data-nama="Jus Jeruk" data-harga="7000" data-kategori="minuman">
+      <img src="jeruk.jpg" alt="Jus Jeruk ">
+      <h3>Jus Jeruk</h3>
+      <p>Rp7.000</p>
+      <input type="number" min="1" value="1" class="jumlah">
+      <button class="tambah">Tambah</button>
+    </div>
+
+    <div class="menu-item" data-nama="Jus Alpukat" data-harga="7000" data-kategori="minuman">
+      <img src="alpikat.jpg" alt="Jus Alpukat ">
+      <h3>Jus Alpukat</h3>
+      <p>Rp7.000</p>
+      <input type="number" min="1" value="1" class="jumlah">
+      <button class="tambah">Tambah</button>
+    </div>
+
+    <div class="menu-item" data-nama="Le Minerale" data-harga="7000" data-kategori="minuman">
+      <img src="air mineral.jpg" alt=" ">
+      <h3>Le Minerale</h3>
+      <p>Rp7.000</p>
+      <input type="number" min="1" value="1" class="jumlah">
+      <button class="tambah">Tambah</button>
+    </div>
+  </div>
+
+  <!-- KERANJANG -->
+  <div class="cart">
+    <h2>🛒 Daftar Pesanan</h2>
+    <ul id="order-list"></ul>
+    <div class="total" id="total-harga">Total: Rp0</div>
+    <button class="clear-btn" id="bersihkan">Bersihkan Pesanan</button>
+  </div>
+
+  <!-- JAVASCRIPT DI BAWAH BODY -->
+  <script>
+    // JavaScript Anda dimulai di sini
+    document.addEventListener("DOMContentLoaded", () => {
+      const buttons = document.querySelectorAll(".tambah");
+      const keranjang = document.getElementById("order-list");
+      const totalText = document.getElementById("total-harga");
+      const clearBtn = document.getElementById("bersihkan");
+      const filterButtons = document.querySelectorAll(".filter-button");
+      const menuItems = document.querySelectorAll(".menu-item");
+
+      let total = 0;
+
+      // Fungsi untuk memfilter menu
+      function filterMenu(category) {
+        menuItems.forEach(item => {
+          const itemCategory = item.dataset.kategori;
+          if (category === 'all' || itemCategory === category) {
+            item.classList.remove('hidden');
+          } else {
+            item.classList.add('hidden');
+          }
+        });
+      }
+
+      // Event listener untuk tombol filter
+      filterButtons.forEach(button => {
+        button.addEventListener("click", () => {
+          // Hapus kelas 'active' dari semua tombol filter
+          filterButtons.forEach(btn => btn.classList.remove('active'));
+          // Tambahkan kelas 'active' ke tombol yang diklik
+          button.classList.add('active');
+
+          const filterCategory = button.dataset.filter;
+          filterMenu(filterCategory);
+        });
+      });
+
+      buttons.forEach(button => {
+        button.addEventListener("click", () => {
+          const item = button.closest(".menu-item");
+          const nama = item.dataset.nama;
+          const harga = parseInt(item.dataset.harga);
+          const jumlah = parseInt(item.querySelector(".jumlah").value);
+
+          if (jumlah <= 0 || isNaN(jumlah)) {
+            alert("Jumlah tidak valid!");
+            return;
+          }
+
+          const subtotal = harga * jumlah;
+          const li = document.createElement("li");
+          li.textContent = `${nama} x${jumlah} - Rp${subtotal.toLocaleString()}`;
+          
+          // Event listener untuk menandai pesanan selesai (klik tunggal)
+          li.addEventListener("click", () => {
+            // Hanya ubah status jika belum selesai
+            if (!li.classList.contains('done')) {
+              li.classList.add('done');
+              // Kurangi total jika item ditandai selesai
+              total -= subtotal;
+            } else {
+              li.classList.remove('done');
+              // Tambahkan kembali ke total jika item dibatalkan selesai
+              total += subtotal;
+            }
+            totalText.textContent = `Total: Rp${total.toLocaleString()}`;
+          });
+
+          // Event listener untuk menghapus pesanan (klik ganda)
+          li.addEventListener("dblclick", () => {
+            // Hanya kurangi total jika item belum ditandai selesai sebelum dihapus
+            if (!li.classList.contains('done')) {
+              total -= subtotal;
+            }
+            li.remove(); // Hapus elemen dari daftar
+            totalText.textContent = `Total: Rp${total.toLocaleString()}`;
+          });
+
+          keranjang.appendChild(li);
+
+          total += subtotal;
+          totalText.textContent = `Total: Rp${total.toLocaleString()}`;
+        });
+      });
+
+      clearBtn.addEventListener("click", () => {
+        if (confirm("Yakin ingin menghapus semua pesanan?")) {
+          keranjang.innerHTML = ""; // Kosongkan daftar pesanan
+          total = 0; // Reset total
+          totalText.textContent = "Total: Rp0"; // Perbarui tampilan total
+        }
+      });
+
+      // Inisialisasi: Tampilkan semua menu saat halaman pertama kali dimuat
+      filterMenu('all');
+    });
+  </script>
+
+</body>
+</html>
